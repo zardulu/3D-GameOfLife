@@ -6,3 +6,48 @@ const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.inner
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
+
+const gridSize = 5; 
+const cubeSize = 1; 
+const gap = 0; 
+
+const cubesGroup = new THREE.Group();
+
+for (let i = 0; i < gridSize; i++) {
+    for (let j = 0; j < gridSize; j++) {
+      for (let k = 0; k < gridSize; k++) {
+
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+const material = new THREE.LineBasicMaterial( {
+	color: 0xffffff,})
+const cube = new THREE.LineSegments( new THREE.EdgesGeometry(geometry), material ); 
+
+const posX = (cubeSize + gap) * (i - gridSize / 2);
+const posY = (cubeSize + gap) * (j - gridSize / 2);
+const posZ = (cubeSize + gap) * (k - gridSize / 2);
+
+cube.position.set(posX, posY, posZ);
+cubesGroup.add(cube);
+
+      }
+    }
+}
+
+ scene.add(cubesGroup);
+
+ const selectcube = cubesGroup.children[1];
+ const newColor = new THREE.Color(0x00ff00);
+ selectcube.material.color = newColor;
+
+camera.position.z = 10;
+
+
+
+function animate() {
+	requestAnimationFrame( animate );
+	renderer.render( scene, camera );
+    cubesGroup.rotation.y += 0.015;
+}
+animate();
+
+
