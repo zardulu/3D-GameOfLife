@@ -7,11 +7,18 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-const gridSize = 5; 
+const gridSize = 3; 
 const cubeSize = 1; 
 const gap = 0; 
 
 const cubesGroup = new THREE.Group();
+createCubes();
+scene.add(cubesGroup);
+
+function createCubes() {
+  cubesGroup.children.forEach((cube) => {
+  cubesGroup.children = [];
+  });
 
 for (let i = 0; i < gridSize; i++) {
     for (let j = 0; j < gridSize; j++) {
@@ -32,22 +39,29 @@ cubesGroup.add(cube);
       }
     }
 }
+}
 
- scene.add(cubesGroup);
 
- const selectcube = cubesGroup.children[1];
- const newColor = new THREE.Color(0x00ff00);
- selectcube.material.color = newColor;
+
+function onDocumentMouseScroll(event) {
+  event.preventDefault();
+  const zoomSpeed = 0.01;
+  camera.position.z += event.deltaY * zoomSpeed;
+  gap += camera.position.z*0.1;
+
+  createCubes();
+}
 
 camera.position.z = 10;
-
-
 
 function animate() {
 	requestAnimationFrame( animate );
 	renderer.render( scene, camera );
     cubesGroup.rotation.y += 0.015;
 }
+
+document.addEventListener("wheel", onDocumentMouseScroll, false);
+
 animate();
 
 
