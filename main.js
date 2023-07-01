@@ -18,8 +18,8 @@ function createCubes() {
     for (let j = 0; j < gridSize; j++) {
       for (let k = 0; k < gridSize; k++) {
         const geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
-        const material = new THREE.LineBasicMaterial({ color: 0xffffff });
-        const cube = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), material);
+        const material = new THREE.MeshNormalMaterial({ color: 0x049ef4 });
+        const cube = new THREE.Mesh(geometry, material);
 
         const posX = (cubeSize + gap) * (i - gridSize / 2);
         const posY = (cubeSize + gap) * (j - gridSize / 2);
@@ -46,11 +46,12 @@ function onDocumentMouseScroll(event) {
   if (camera.position.z <= 10) {
     gap -= event.deltaY * zoomSpeed * 0.1;
     gap = Math.max(gap, 0);
+  }else{ gap = 0;}
     
     cubesGroup.clear();
     createCubes();
   }
-}
+
 
 function animate() {
   requestAnimationFrame(animate);
