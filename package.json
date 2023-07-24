@@ -5,7 +5,9 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "vite"
+    "dev": "vite",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "author": "",
   "license": "ISC",
@@ -14,5 +16,7 @@
   },
   "dependencies": {
     "three": "^0.154.0"
-  }
+  },
+  "homepage": "http://zardulu.github.io/CubeJS"
+  
 }
