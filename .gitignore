@@ -1,0 +1,16 @@
+# Node.js dependencies
+node_modules/
+
+# Vite build output
+/dist/
+
+# Vite development server cache
+/.vite/
+
+# IDE/Editor specific files
+.idea/
+.vscode/
+*.sublime-*
+
+# macOS specific files
+.DS_Store

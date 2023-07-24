@@ -13,6 +13,7 @@ let gap = 0;
 
 const cubesGroup = new THREE.Group();
 
+// Creates a group of cubes in (x,y,z) plane
 function createCubes() {
   for (let i = 0; i < gridSize; i++) {
     for (let j = 0; j < gridSize; j++) {
@@ -38,6 +39,43 @@ createCubes();
 
 camera.position.z = 10;
 
+
+let mouseDown = false,
+mouseX = 0,
+mouseY = 0,
+lastMouseX = 0,
+lastMouseY = 0;
+
+function onDocumentMouseDown(event) {
+mouseDown = true;
+lastMouseX = event.clientX;
+lastMouseY = event.clientY;
+}
+
+function onDocumentMouseUp(event) {
+mouseDown = false;
+}
+
+function onDocumentMouseMove(event) {
+if (!mouseDown) return;
+mouseX = event.clientX;
+mouseY = event.clientY;
+
+
+// Rotate the cube based on mouse drag
+const deltaX = mouseX - lastMouseX;
+const deltaY = mouseY - lastMouseY
+
+if (mouseDown) {
+    cubesGroup.rotation.x += deltaY * 0.01;
+    cubesGroup.rotation.y += deltaX * 0.01;
+  }
+
+  lastMouseX = mouseX;
+  lastMouseY = mouseY;
+}
+
+// Zoom and cube separation
 function onDocumentMouseScroll(event) {
   event.preventDefault();
   const zoomSpeed = 0.01;
@@ -53,13 +91,24 @@ function onDocumentMouseScroll(event) {
   }
 
 
+
 function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
   cubesGroup.rotation.y += 0.015;
+
+  
+    
 }
 
+//Event listeners
 document.addEventListener("wheel", onDocumentMouseScroll, false);
+document.addEventListener("mousedown", onDocumentMouseDown, false);
+document.addEventListener("mouseup", onDocumentMouseUp, false);
+document.addEventListener("mousemove", onDocumentMouseMove, false);
+
+
+
 
 animate();
 
