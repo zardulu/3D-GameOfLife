@@ -46,6 +46,7 @@ mouseY = 0,
 lastMouseX = 0,
 lastMouseY = 0;
 
+// Return mouse coordinates when inital mouseDown
 function onDocumentMouseDown(event) {
 mouseDown = true;
 lastMouseX = event.clientX;
@@ -56,6 +57,7 @@ function onDocumentMouseUp(event) {
 mouseDown = false;
 }
 
+// Return mouse coordinates when mouseDown and move
 function onDocumentMouseMove(event) {
 if (!mouseDown) return;
 mouseX = event.clientX;
@@ -91,7 +93,7 @@ function onDocumentMouseScroll(event) {
   }
 
 
-
+// Render
 function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
