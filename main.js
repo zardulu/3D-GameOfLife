@@ -22,9 +22,9 @@ function createCubes() {
         const material = new THREE.MeshNormalMaterial({ color: 0x049ef4 });
         const cube = new THREE.Mesh(geometry, material);
 
-        const posX = (cubeSize + gap) * (i - gridSize / 2);
-        const posY = (cubeSize + gap) * (j - gridSize / 2);
-        const posZ = (cubeSize + gap) * (k - gridSize / 2);
+        const posX = (cubeSize + gap) * (i - cubeSize);
+        const posY = (cubeSize + gap) * (j - cubeSize);
+        const posZ = (cubeSize + gap) * (k - cubeSize);
 
         cube.position.set(posX, posY, posZ);
         cubesGroup.add(cube);
