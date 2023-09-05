@@ -1,10 +1,12 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 100);
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
 const gridSize = 3;
@@ -13,20 +15,25 @@ let gap = 0;
 
 const cubesGroup = new THREE.Group();
 
-// Creates a group of cubes in (x,y,z) plane
+// Creates a group of cubes in (x, y, z) plane
 function createCubes() {
   for (let i = 0; i < gridSize; i++) {
     for (let j = 0; j < gridSize; j++) {
       for (let k = 0; k < gridSize; k++) {
         const geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
-        const material = new THREE.MeshNormalMaterial({ color: 0x049ef4 });
+        const material = new THREE.MeshPhongMaterial( {
+					color: 0x031cfc,
+					shininess: 50,
+					side: THREE.DoubleSide});
+          
         const cube = new THREE.Mesh(geometry, material);
 
         const posX = (cubeSize + gap) * (i - cubeSize);
-        const posY = (cubeSize + gap) * (j - cubeSize);
+        const posY = (cubeSize + gap) * (j - cubeSize); 
         const posZ = (cubeSize + gap) * (k - cubeSize);
 
         cube.position.set(posX, posY, posZ);
+        cube.castShadow = true; 
         cubesGroup.add(cube);
       }
     }
@@ -37,45 +44,38 @@ function createCubes() {
 
 createCubes();
 
-camera.position.z = 10;
+camera.position.set(5, 10, 15);
+camera.lookAt(0, 1, 0);
+
+// Lighting
+scene.add(new THREE.AmbientLight(0xcccccc));
+
+const spotLight = new THREE.SpotLight(0xffffff, 45);
+spotLight.angle = Math.PI / 6;
+spotLight.penumbra = 0.8;
+spotLight.position.set(5, 10, 0);
+spotLight.castShadow = true;
+spotLight.shadow.camera.near = 0.5;
+spotLight.shadow.camera.far = 20; 
+spotLight.shadow.mapSize.width = 1024;
+spotLight.shadow.mapSize.height = 1024;
+scene.add(spotLight);
 
 
-let mouseDown = false,
-mouseX = 0,
-mouseY = 0,
-lastMouseX = 0,
-lastMouseY = 0;
 
-// Return mouse coordinates when inital mouseDown
-function onDocumentMouseDown(event) {
-mouseDown = true;
-lastMouseX = event.clientX;
-lastMouseY = event.clientY;
-}
+// Ground
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(25, 20, 1, 1),
+  new THREE.MeshPhongMaterial({ color: 0xa0adaf, shininess: 200 })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -4; 
+ground.receiveShadow = true;
+scene.add(ground);
 
-function onDocumentMouseUp(event) {
-mouseDown = false;
-}
-
-// Return mouse coordinates when mouseDown and move
-function onDocumentMouseMove(event) {
-if (!mouseDown) return;
-mouseX = event.clientX;
-mouseY = event.clientY;
-
-
-// Rotate the cube based on mouse drag
-const deltaX = mouseX - lastMouseX;
-const deltaY = mouseY - lastMouseY
-
-if (mouseDown) {
-    cubesGroup.rotation.x += deltaY * 0.01;
-    cubesGroup.rotation.y += deltaX * 0.01;
-  }
-
-  lastMouseX = mouseX;
-  lastMouseY = mouseY;
-}
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 1, 0);
+controls.update();
 
 // Zoom and cube separation
 function onDocumentMouseScroll(event) {
@@ -83,34 +83,25 @@ function onDocumentMouseScroll(event) {
   const zoomSpeed = 0.01;
   camera.position.z += event.deltaY * zoomSpeed;
 
-  if (camera.position.z <= 10) {
-    gap -= event.deltaY * zoomSpeed * 0.1;
+  if (camera.position.z <= 15) {
+    gap -= event.deltaY * zoomSpeed * 0.25;
     gap = Math.max(gap, 0);
-  }else{ gap = 0;}
-    
-    cubesGroup.clear();
-    createCubes();
+  } else {
+    gap = 0;
   }
 
+  cubesGroup.clear();
+  createCubes();
+}
 
 // Render
 function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
   cubesGroup.rotation.y += 0.015;
-
-  
-    
 }
 
-//Event listeners
+// Event listeners
 document.addEventListener("wheel", onDocumentMouseScroll, false);
-document.addEventListener("mousedown", onDocumentMouseDown, false);
-document.addEventListener("mouseup", onDocumentMouseUp, false);
-document.addEventListener("mousemove", onDocumentMouseMove, false);
-
-
-
 
 animate();
-
